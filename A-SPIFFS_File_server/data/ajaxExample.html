@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<body>
+<title>  Demo ESP8266 AJAX </title>
+<style>
+ body { background-color: #83ff33; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }\
+</style> 
+<div id="demo">
+Commande de la LED Antenne de l'ESP (D4) :
+	<button type="button" onclick="sendData(1)">LED ON</button>
+	<button type="button" onclick="sendData(0)">LED OFF</button><BR>
+<br>
+</div>
+     Etat de la LED : <span id="ledState">NA</span>
+<div>
+	ESP uptime (s) : <span id="uptime">NA</span><br>
+   
+</div>
+<script>
+
+// fonction permettant de demander le uptime 
+function getUptime() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // l'élement uptime de la page prend la valeur de la réponse
+      document.getElementById("uptime").innerHTML = this.responseText; 
+    }
+  };
+  xhttp.open("GET", "getUptime", true);
+  xhttp.send();
+}
+
+// demande du uptime toutes les 2 secondes
+setInterval(function() {
+  
+  getUptime();
+}, 2000); // 2000 ms
+
+// fonction permettant de changer l'état de la LED
+// on envoie un requête GET setLED avec ledState=0 ou 1 en argument  
+function sendData(led) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("ledState").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "setLED?ledState="+led, true);
+  xhttp.send();
+}
+
+
+
+
+</script>
+</body>
+</html>
