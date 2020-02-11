@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+ <script src="anthscript.js"></script> 
+<body>
+    <title> Demo ESP8266 AJAX </title>
+    <style>
+        body {
+            background-color: #222224;
+            font-family: Arial, San Francisco, Sans-Serif;
+            Color: #adadad;
+        }
+        
+        \
+    </style>
+    <center>
+        <div id="demo">
+            Commande de la LED Antenne de l'ESP (D4) :
+            <button type="button" onclick="sendData(1)">LED ON</button>
+            <button type="button" onclick="sendData(0)">LED OFF</button>
+            <BR>
+            <br>
+            <div>
+                <title> Etat actuel des services du système</title>
+            </div>
+        </div>
+        Etat de la LED : <span id="ledState">NA</span>
+        <div>
+            ESP uptime (s) : <span id="uptime">NA</span>
+            <br>
+
+        </div>
+        <div>
+            Etat actuel capteur temperature : <span id="dataTemp">NA</span>
+            <br>
+
+        </div>
+        <div>
+            Etat actuel capteur humidite : <span id="dataHum">NA</span>
+            <br>
+
+        </div>
+        <div>
+            Etat actuel capteur luminosite : <span id="dataLum">NA</span>
+            <br>
+
+        </div>
+    </center>
+       <div id="tabs">
+        <body><center>
+      <button onclick="window.location.href = '/tableau.html';">Aller au tableau</button>
+      <button onclick="window.location.href = '/index.html';">Aller au menu principal</button>
+      </center>
+   </body>
+
+        </div>
+</body>
+
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><!--définition de jeu de caractères -->
+<meta name="viewport" content="width=device-width, initial-scale=1"> <!--adaptation en largeur -->
+
+<title>Exemple tableau</title> 
+
+<!--chargement  des librairies locales : chart.js et jquery -->
+<script type="text/javascript" src = "./Chart.min.js"></script>  
+<script type="text/javascript" src="./jquery-1.11.1.min.js"></script>
+
+<script type="text/javascript">
+
+var dataPoints = [] ; // le tableau des points du graphique format JSON :  [{x:1,y:0.4},{x:2,y:0.9},{x:4,y:1.2},....]
+
+// fonction permettant de parser un fichier csv : une donnée de la forme x,y par ligne
+function getDataPointsFromCSV(csv) {
+            var  csvLines = points = [];
+            csvLines = csv.split(/[\r?\n|\r|\n]+/);          // on récupère un tableau de lignes
+		        
+            for (var i = 0; i < csvLines.length; i++)   // pour chaque ligne i
+                if (csvLines[i].length > 0) {           //  non vide
+                    points = csvLines[i].split(",");  //   points est un couple de données texte (string)
+                    dataPoints.push({                 //   on met les points dans le tableau dataPoints en format JSON {x:v1,y:v2} 
+                        x: parseFloat(points[0]),     //  axe du temps 0, lumière 1, temp 2, humidité 3
+                        y: parseFloat(points[2]) 		//  axe lumière
+                    });
+                }
+            console.log("loading :");
+            console.log(dataPoints);
+            return dataPoints ;  // on retourne le tableau de données 
+}
+
+
+// fonction qui génére  sur le contexte ctx un graphique avec les données dataPoints 
+function drawGraph(ctx,dataPoints) {
+           
+           // définie le graphique qui va apparaître sur le contexte ctx
+           // voir les différentes possibilités à : https://www.chartjs.org
+           var myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                                datasets: [{
+                                                label: 'Les capteurs',  // légende
+                                                fill: false,	//essayez avec True !
+                                                backgroundColor: 'rgba( 243, 156, 18 , 1)', //Dot marker color
+                                                borderColor: 'rgba( 243, 156, 18 , 1)',	//Graph Line Color
+                                                data: dataPoints  // les données du graphique
+                                           }]
+                              },
+                        options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                        xAxes: [{
+                                                type: 'linear',
+                                                position: 'bottom'
+                                                }],
+                                        yAxes: [{
+                                                ticks: {
+                                                beginAtZero:true //essayez avec False !
+                                                        }
+                                                }]
+                                         }
+                                 }
+                       }); // fin new Chart
+}
+
+
+    // fonction exécutée au chargement de la page
+    window.onload = function() {
+        
+	console.log("load");  // affiche dans la console du navigateur pour le débug
+        // requette jquery : $.get() voir https://api.jquery.com/jquery.get/
+        // demande le fichier local "ExampleData.csv" puis exécute la "function" avec les données reçues (data)
+        // data contient le contenu du fichier demandé.
+       	$.get("./sensors.csv", function(data) {
+
+           var filenameHtml = document.getElementById('filename'); // récupère l'élément html nomé filename
+           filenameHtml.innerHTML += "sensors.csv";  // y ajoute le nom du fichier
+           console.log("generating chart");
+           // récupère le "contexte graphique" de l'élément html nomé Chart
+           var ctx = document.getElementById("Chart").getContext('2d');
+           // met en forme JSON les données pour le graphique
+           dataPoints=getDataPointsFromCSV(data);
+           // génère le graphique
+           drawGraph(ctx,dataPoints);
+
+               }// fin de function (associée à get)
+                  );  // fin le la requette $.get
+
+  } // fin de la function onload 
+</script>
+</head>
+<!-- Corps de la page html -->
+<body> 
+
+ <div  style="text-align:center;"><b>Graphique des capteurs</b>  </div>
+ <br> 
+ <div id="filename"> Data read from local CSV file in SPIFFS : </div>
+     <div class="chart-container" style="position: relative; height:350px; width:80%">  
+        <canvas id="Chart"></canvas> <!-- l'objet où va se trouver le graphique -->
+    </div>
+
+     <div id="tabs">
+        <body><center>
+      <button onclick="window.location.href = '/index.html';">Aller au menu principal</button>
+      </center>
+   </body>
+
+        </div>
+</body>
+</html>
